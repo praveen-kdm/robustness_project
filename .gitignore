@@ -1,0 +1,26 @@
+# datasets
+data/
+datasets/
+
+# outputs
+outputs/
+results/
+logs/
+runs/
+
+# model weights
+*.pt
+*.pth
+*.ckpt
+
+# cache
+__pycache__/
+*.pyc
+
+# large files
+*.zip
+*.tar
+*.gz
+
+# notebooks checkpoints
+.ipynb_checkpoints/
