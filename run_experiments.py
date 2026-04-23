@@ -16,8 +16,8 @@ import os
 
 if __name__=="__main__":
     args = ArgumentParser()
-    args.add_argument("--model-client", type=str, default="llama3.1:70b")
-    args.add_argument("--environment", choices=["travel_planning", "financial_article_writing", "code_generation", "multi_agent_debate"], default="travel_planning")
+    args.add_argument("--model-client", type=str, default="llama3.1:8b")
+    args.add_argument("--environment", choices=["travel_planning", "financial_article_writing", "code_generation", "multi_agent_debate"], default="multi_agent_debate")
     args.add_argument("--adversarial-agent", type=str)
     args.add_argument("--safe", action="store_true")
     args.add_argument("--guardian", action="store_true")
@@ -25,12 +25,20 @@ if __name__=="__main__":
     args = args.parse_args()
 
     # Load dataset of target actions
-    target_actions = pd.read_csv("datasets/BAD-ACTS.csv")
+    # target_actions = pd.read_csv("datasets/BAD-ACTS.csv")
+    target_actions = pd.read_csv("datasets/copy_BAD-ACTS.csv")
 
-    # set up model_client
-    if "llama" in args.model_client:
+    # # set up model_client
+    # if "llama" in args.model_client:
+    #     model_client = OllamaChatCompletionClient(
+    #         model=args.model_client
+    #     )
+
+   # set up model_client
+    if any(m in args.model_client.lower() for m in ["llama", "qwen"]):
         model_client = OllamaChatCompletionClient(
-            model=args.model_client
+            model=args.model_client,
+            base_url="http://localhost:11434"
         )
     elif "gpt" in args.model_client:
         model_client = OpenAIChatCompletionClient(
@@ -69,7 +77,8 @@ if __name__=="__main__":
     adversarial_agent_name = args.adversarial_agent
     adversarial_agent_client = AdversarialAgent(args.environment)
     for i in range(len(target_actions)):
-        environment.reset()
+        # environment.reset()       # This was synchronous
+        loop.run_until_complete(environment.reset()) # Properly await the reset
 
         # Collect current objective
         curr_target = target_actions.iloc[i]
@@ -93,9 +102,14 @@ if __name__=="__main__":
                     "keywords" : curr_target["Keyword"]
                     }
 
+        # # Run episode
+        # trajectory = loop.run_until_complete(environment.run(task))
+        # message_history = asyncio.run(environment.team.save_state())
+
         # Run episode
         trajectory = loop.run_until_complete(environment.run(task))
-        message_history = asyncio.run(environment.team.save_state())
+        # Use the existing loop for save_state as well
+        message_history = loop.run_until_complete(environment.team.save_state())
 
         # Update results
         curr_res["team_states"] = message_history
@@ -109,5 +123,5 @@ if __name__=="__main__":
     # save results
     if not "results" in os.listdir():
         os.mkdir("results")
-    with open(f"results/{args.model_client}_{args.environment}_{len(target_actions)}_{args.adversarial_agent}_{'safe' if args.safe else ''}_{'_GUARDIAN' if args.guardian else ''}{args.id if args.id else ""}.json", "w") as f:
+    with open(f"results/{args.model_client}_{args.environment}_{len(target_actions)}_{args.adversarial_agent}_{'safe' if args.safe else ''}_{'_GUARDIAN' if args.guardian else ''}_{args.id if args.id else ''}.json", "w") as f:
         json.dump(results, f)
