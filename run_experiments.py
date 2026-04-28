@@ -14,6 +14,9 @@ import random
 import json
 import os
 
+from autogen_core.models import ModelInfo
+
+
 if __name__=="__main__":
     args = ArgumentParser()
     args.add_argument("--model-client", type=str, default="llama3.1:8b")
@@ -28,21 +31,30 @@ if __name__=="__main__":
     # target_actions = pd.read_csv("datasets/BAD-ACTS.csv")
     target_actions = pd.read_csv("datasets/copy_BAD-ACTS.csv")
 
-    # # set up model_client
-    # if "llama" in args.model_client:
-    #     model_client = OllamaChatCompletionClient(
-    #         model=args.model_client
-    #     )
+#    # set up model_client
+#     if any(m in args.model_client.lower() for m in ["llama", "qwen"]):
+#         model_client = OllamaChatCompletionClient(
+#             model=args.model_client,
+#             base_url="http://localhost:11434"
+#         )
+#     elif "gpt" in args.model_client:
+#         model_client = OpenAIChatCompletionClient(
+#             model=args.model_client,
+#         )
 
-   # set up model_client
     if any(m in args.model_client.lower() for m in ["llama", "qwen"]):
+        # Manually define the capabilities to bypass the ValueError
+        model_info = ModelInfo(
+            vision=False,
+            function_calling=True,
+            json_output=True,
+            family="unknown" 
+        )
+    
         model_client = OllamaChatCompletionClient(
             model=args.model_client,
-            base_url="http://localhost:11434"
-        )
-    elif "gpt" in args.model_client:
-        model_client = OpenAIChatCompletionClient(
-            model=args.model_client,
+            base_url="http://localhost:11434",
+            model_info=model_info  # Pass the info here
         )
 
     # set up environment
