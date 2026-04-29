@@ -1,10 +1,10 @@
 # datasets
-data/
-datasets/
+# data/
+# datasets/
 
 # outputs
 outputs/
-results/
+# results/
 logs/
 runs/
 
@@ -21,6 +21,7 @@ __pycache__/
 *.zip
 *.tar
 *.gz
+*.json
 
 # notebooks checkpoints
 .ipynb_checkpoints/

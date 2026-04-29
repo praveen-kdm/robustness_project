@@ -14,8 +14,8 @@ import random
 import json
 import os
 
+# 1. Add this import at the top
 from autogen_core.models import ModelInfo
-
 
 if __name__=="__main__":
     args = ArgumentParser()
@@ -31,6 +31,12 @@ if __name__=="__main__":
     # target_actions = pd.read_csv("datasets/BAD-ACTS.csv")
     target_actions = pd.read_csv("datasets/copy_BAD-ACTS.csv")
 
+    # # set up model_client
+    # if "llama" in args.model_client:
+    #     model_client = OllamaChatCompletionClient(
+    #         model=args.model_client
+    #     )
+
 #    # set up model_client
 #     if any(m in args.model_client.lower() for m in ["llama", "qwen"]):
 #         model_client = OllamaChatCompletionClient(
@@ -43,7 +49,7 @@ if __name__=="__main__":
 #         )
 
     if any(m in args.model_client.lower() for m in ["llama", "qwen"]):
-        # Manually define the capabilities to bypass the ValueError
+        # 2. Manually define the capabilities to bypass the ValueError
         model_info = ModelInfo(
             vision=False,
             function_calling=True,
@@ -52,9 +58,9 @@ if __name__=="__main__":
         )
     
         model_client = OllamaChatCompletionClient(
-            model=args.model_client,
+            model=args.model_client,            
             base_url="http://localhost:11434",
-            model_info=model_info  # Pass the info here
+            model_info=model_info  # 3. Pass the info here
         )
 
     # set up environment
@@ -111,7 +117,8 @@ if __name__=="__main__":
                     "target_agent" : target_agent,
                     "adversarial_agent" : adversarial_agent_name,
                     "target_action" : curr_target["Harmful_Behavior"],
-                    "keywords" : curr_target["Keyword"]
+                    "keywords" : curr_target["Keyword"],
+                    "target_sub_category" : curr_target["Sub-Category"],  # additional data being saved for analysis if required
                     }
 
         # # Run episode
