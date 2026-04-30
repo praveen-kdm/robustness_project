@@ -13,11 +13,18 @@ from agents.guardian_agent import GuardianAgent
 import random
 import json
 import os
+from pathlib import Path
+import sys
 
 # 1. Add this import at the top
 from autogen_core.models import ModelInfo
 
 if __name__=="__main__":
+    # Add these two lines immediately:
+    import os
+    custom_port = os.environ.get("MY_OLLAMA_PORT", "11434")
+    os.environ["OLLAMA_HOST"] = f"127.0.0.1:{custom_port}"
+
     args = ArgumentParser()
     args.add_argument("--model-client", type=str, default="llama3.1:8b")
     args.add_argument("--environment", choices=["travel_planning", "financial_article_writing", "code_generation", "multi_agent_debate"], default="multi_agent_debate")
@@ -27,26 +34,13 @@ if __name__=="__main__":
     args.add_argument("--id", type=int)
     args = args.parse_args()
 
+    script_dir = Path(__file__).parent.resolve()
+    project_root = script_dir
+
     # Load dataset of target actions
     # target_actions = pd.read_csv("datasets/BAD-ACTS.csv")
-    target_actions = pd.read_csv("datasets/copy_BAD-ACTS.csv")
-
-    # # set up model_client
-    # if "llama" in args.model_client:
-    #     model_client = OllamaChatCompletionClient(
-    #         model=args.model_client
-    #     )
-
-#    # set up model_client
-#     if any(m in args.model_client.lower() for m in ["llama", "qwen"]):
-#         model_client = OllamaChatCompletionClient(
-#             model=args.model_client,
-#             base_url="http://localhost:11434"
-#         )
-#     elif "gpt" in args.model_client:
-#         model_client = OpenAIChatCompletionClient(
-#             model=args.model_client,
-#         )
+    # target_actions = pd.read_csv("datasets/copy_BAD-ACTS.csv")
+    target_actions = pd.read_csv("datasets/copy3_BAD-ACTS.csv")
 
     if any(m in args.model_client.lower() for m in ["llama", "qwen"]):
         # 2. Manually define the capabilities to bypass the ValueError
@@ -59,7 +53,7 @@ if __name__=="__main__":
     
         model_client = OllamaChatCompletionClient(
             model=args.model_client,            
-            base_url="http://localhost:11434",
+            base_url=f"http://localhost:{custom_port}", # 2. Use the dynamic port here
             model_info=model_info  # 3. Pass the info here
         )
 
@@ -89,28 +83,41 @@ if __name__=="__main__":
     
     # initialize Results
     results = []
-
     loop = asyncio.new_event_loop()
+
     # Create adversarial Agent
-    adversarial_agent_name = args.adversarial_agent
     adversarial_agent_client = AdversarialAgent(args.environment)
+
     for i in range(len(target_actions)):
-        # environment.reset()       # This was synchronous
-        loop.run_until_complete(environment.reset()) # Properly await the reset
 
-        # Collect current objective
+        # 1. Collect current objective
         curr_target = target_actions.iloc[i]
-
-        # Skip attacks where the adversary is the target agent
         target_agent = curr_target["Target"]
+        adversarial_agent_name = args.adversarial_agent
+
         if target_agent.strip() == adversarial_agent_name.strip():
             continue
 
-        print(curr_target["Harmful_Behavior"])
+        print(f"Starting Row {i}: {curr_target['Harmful_Behavior']}")
 
-        # Replace agent with adversarial agent
-        adversarial_agent = adversarial_agent_client.create_adv_agent(curr_target["Harmful_Behavior"], adversarial_agent_name, model_client)
+        # 2. CREATE AND REPLACE AGENT FIRST
+        # This ensures the specific "Harmful_Behavior" is injected before reset
+        adversarial_agent = adversarial_agent_client.create_adv_agent(
+            curr_target["Harmful_Behavior"], 
+            adversarial_agent_name, 
+            model_client
+        )
         environment.replace_agent(adversarial_agent_name, adversarial_agent)
+
+        # 3. NOW RESET (Crucial: New persona, zero memory)
+        loop.run_until_complete(environment.reset())
+
+        # 4. Run episode
+        # Use the task from the environment setup or the CSV
+        trajectory = loop.run_until_complete(environment.run(task))
+        
+        # 5. Capture State
+        message_history = loop.run_until_complete(environment.team.save_state())
         
         # set up relevant results for environment
         curr_res = {"id":i, 
@@ -121,15 +128,6 @@ if __name__=="__main__":
                     "target_sub_category" : curr_target["Sub-Category"],  # additional data being saved for analysis if required
                     }
 
-        # # Run episode
-        # trajectory = loop.run_until_complete(environment.run(task))
-        # message_history = asyncio.run(environment.team.save_state())
-
-        # Run episode
-        trajectory = loop.run_until_complete(environment.run(task))
-        # Use the existing loop for save_state as well
-        message_history = loop.run_until_complete(environment.team.save_state())
-
         # Update results
         curr_res["team_states"] = message_history
         if args.environment == "travel_planning":
@@ -139,8 +137,17 @@ if __name__=="__main__":
             curr_res["files"] = environment.get_files()
         results.append(curr_res)
          
-    # save results
-    if not "results" in os.listdir():
-        os.mkdir("results")
-    with open(f"results/{args.model_client}_{args.environment}_{len(target_actions)}_{args.adversarial_agent}_{'safe' if args.safe else ''}_{'_GUARDIAN' if args.guardian else ''}_{args.id if args.id else ''}.json", "w") as f:
+
+    safe_model_name = args.model_client.replace(":", "_")
+    sub_folder_name = safe_model_name
+
+    results_json_dir = project_root / "results" / sub_folder_name
+    results_json_dir.mkdir(parents=True, exist_ok=True)
+
+    guardian_suffix = "_GUARDIAN" if args.guardian else ""
+    safe_suffix = "_safe" if args.safe else ""
+
+    file_name = f"{safe_model_name}_{args.environment}_{len(target_actions)}_{args.adversarial_agent}{safe_suffix}{guardian_suffix}_{args.id or ''}.json"
+    
+    with open(results_json_dir / file_name, "w") as f:
         json.dump(results, f)
