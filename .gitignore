@@ -22,6 +22,7 @@ __pycache__/
 *.tar
 *.gz
 *.json
+*.log
 
 # notebooks checkpoints
 .ipynb_checkpoints/
