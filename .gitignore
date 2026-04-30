@@ -26,3 +26,16 @@ __pycache__/
 
 # notebooks checkpoints
 .ipynb_checkpoints/
+
+# PBS Logs and specific project logs
+job_logs/
+ollama_server.log
+*.pid
+
+# Results folder (usually very large JSONs)
+results/
+
+# LaTeX and PDF artifacts if you generate them
+*.pdf
+*.aux
+*.log
