@@ -39,3 +39,6 @@ results/
 *.pdf
 *.aux
 *.log
+
+results/**/*.csv
+results/**/*.json
