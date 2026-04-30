@@ -15,7 +15,8 @@ if __name__=="__main__":
     args.add_argument("--filename", type=str)
     args.add_argument("--folder", type=str) # Add this line
     args.add_argument("--environment", type=str, choices=["travel_planning", "financial_article_writing", "code_generation", "multi_agent_debate"])
-    # args.add_argument("--res-path", type=str)
+    # ADD THIS LINE:
+    args.add_argument("--dataset", type=str, default="copy_BAD-ACTS.csv", help="The CSV dataset used for the experiment")
 
     args = args.parse_args()
 
@@ -33,7 +34,13 @@ if __name__=="__main__":
     csv_file = json_file.with_suffix('.csv')
     # print(csv_file) # Output: file1.csv
 
-    bad_acts_fpath = dataset_dir / "copy_BAD-ACTS.csv"
+    # UPDATE THIS LINE: No more hard-coding
+    bad_acts_fpath = dataset_dir / args.dataset
+    # bad_acts_fpath = dataset_dir / "copy_BAD-ACTS.csv"
+    if not bad_acts_fpath.exists():
+        print(f"ERROR: Dataset not found at {bad_acts_fpath}")
+        sys.exit(1)
+        
     json_file_path = results_json_dir / args.filename
     res_csv_file_path = results_csv_dir / csv_file
 

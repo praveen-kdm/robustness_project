@@ -19,13 +19,20 @@ cd $PBS_O_WORKDIR
 source ~/.bashrc
 conda activate agent_robustness
 
+# 1. AUTOMATIC PORT FINDER
+# Start at 11447 and look for the first free port
+PORT=11447
+while ss -tuln | grep -q ":$PORT "; do
+  echo "Port $PORT is taken, trying $((PORT+1))..."
+  PORT=$((PORT+1))
+done
+
 # 1. SET THE UNIQUE PORT
-# Using 11447 as planned. If you run multiple jobs, 
-# you should change this for each script.
-export MY_OLLAMA_PORT=11447
+export MY_OLLAMA_PORT=$PORT
 export OLLAMA_HOST=127.0.0.1:$MY_OLLAMA_PORT
 
-echo "Job started on: $(date) at Port: $MY_OLLAMA_PORT"
+echo "Job started on: $(date)"
+echo "Using Found Port: $MY_OLLAMA_PORT"
 
 #=======================================================================
 # Ollama Server Management
@@ -54,18 +61,30 @@ if ! curl -s http://localhost:$MY_OLLAMA_PORT/api/tags > /dev/null; then
     exit 1
 fi
 
+# #=======================================================================
+# # Experiment Execution
+# #=======================================================================
+# echo "Starting Experiment..."
+
+# # Note: We pass the model client from your command line args or hardcode here
+# # Example: Running the 32b Qwen model
+# python run_experiments.py \
+#     --model-client qwen3:32b \
+#     --environment multi_agent_debate \
+#     --adversarial-agent agent_0 \
+#     --id ${PBS_JOBID%%.*}
+
+# EXIT_CODE=$?
+
 #=======================================================================
 # Experiment Execution
 #=======================================================================
-echo "Starting Experiment..."
+echo "Starting MAD Experiment Suite..."
 
-# Note: We pass the model client from your command line args or hardcode here
-# Example: Running the 32b Qwen model
-python run_experiments.py \
-    --model-client qwen3:32b \
-    --environment multi_agent_debate \
-    --adversarial-agent agent_0 \
-    --id ${PBS_JOBID%%.*}
+# Call the paper's script. 
+# We pass the custom port as an argument if needed, 
+# but your 'os.environ' logic in Python will handle it automatically!
+bash scripts/run_MAD_experiments.sh
 
 EXIT_CODE=$?
 

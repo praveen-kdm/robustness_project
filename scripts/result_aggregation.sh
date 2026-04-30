@@ -1,4 +1,5 @@
 #!/bin/bash
+#result_aggregation.sh
 
 # 1. Get the folder path passed as an argument (e.g., results/llama3.1)
 TARGET_FOLDER=$1

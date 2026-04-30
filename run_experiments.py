@@ -31,7 +31,8 @@ if __name__=="__main__":
     args.add_argument("--adversarial-agent", type=str)
     args.add_argument("--safe", action="store_true")
     args.add_argument("--guardian", action="store_true")
-    args.add_argument("--id", type=int)
+    args.add_argument("--id", type=str)
+    args.add_argument("--seed", type=int, default=42)
     args = args.parse_args()
 
     script_dir = Path(__file__).parent.resolve()
@@ -39,8 +40,8 @@ if __name__=="__main__":
 
     # Load dataset of target actions
     # target_actions = pd.read_csv("datasets/BAD-ACTS.csv")
-    # target_actions = pd.read_csv("datasets/copy_BAD-ACTS.csv")
-    target_actions = pd.read_csv("datasets/copy3_BAD-ACTS.csv")
+    target_actions = pd.read_csv("datasets/copy_BAD-ACTS.csv")
+    # target_actions = pd.read_csv("datasets/copy3_BAD-ACTS.csv")
 
     if any(m in args.model_client.lower() for m in ["llama", "qwen"]):
         # 2. Manually define the capabilities to bypass the ValueError
@@ -54,7 +55,14 @@ if __name__=="__main__":
         model_client = OllamaChatCompletionClient(
             model=args.model_client,            
             base_url=f"http://localhost:{custom_port}", # 2. Use the dynamic port here
-            model_info=model_info  # 3. Pass the info here
+            model_info=model_info,  # 3. Pass the info here
+            # Add this line to control randomness
+            extra_create_args={
+                "options": {
+                    "seed": args.seed,
+                    "temperature": 0.7  # Usually set > 0 to allow the seed to matter
+                }
+            }
         )
 
     # set up environment
