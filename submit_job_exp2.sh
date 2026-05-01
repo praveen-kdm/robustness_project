@@ -77,6 +77,7 @@ SECS=$((DURATION % 60))
 echo "================================================="
 echo "Exp2 finished with exit code $EXIT_CODE"
 echo "Total Runtime: ${HOURS}h ${MINS}m ${SECS}s"
+# echo "Finished at: $(date)"
 echo "================================================="
 
 #=======================================================================
