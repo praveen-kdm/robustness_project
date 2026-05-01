@@ -1,12 +1,3 @@
-# ARGS="$@"
-# python3 run_experiments.py --environment multi_agent_debate --adversarial-agent agent_0 --model-client llama3.1:8b $ARGS
-# python3 run_experiments.py --environment multi_agent_debate --adversarial-agent agent_1 --model-client llama3.1:8b $ARGS
-# python3 run_experiments.py --environment multi_agent_debate --adversarial-agent agent_2 --model-client llama3.1:8b $ARGS
-# python3 run_experiments.py --environment multi_agent_debate --adversarial-agent agent_3 --model-client llama3.1:8b $ARGS
-# python3 run_experiments.py --environment multi_agent_debate --adversarial-agent agent_4 --model-client llama3.1:8b $ARGS
-
-
-
 #!/bin/bash
 # run_MAD_experiments.sh
 

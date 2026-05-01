@@ -58,10 +58,7 @@ class MultiAgentDebate(Core_Environment):
         self.create_team()
 
 if __name__=="__main__":
-    # model_client = OllamaChatCompletionClient(
-    #     model="llama3.1:70b"
-    # )
-
+    
     model_client = OllamaChatCompletionClient(
         model="llama3.1:8b",          # Changed from 70b
         base_url="http://localhost:11434" # Added local URL

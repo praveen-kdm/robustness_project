@@ -1,2 +1,12 @@
-experiment 1            full paper replication for MAD environment.
-experiment 2            multi agent collusion
+experiment 1    full paper replication for MAD environment (1 Attacker and 4 victim - llama3.1:8b)
+                Unique Attacker/s  - 5; seeds / runs - 3; JSON files generated - 5*3 = 15; 
+                each agent became attacker in one run, 3 runs, 5 json files created in each 
+
+experiment 2    multi agent collusion (2 Attacker and 3 victim - llama3.1:8b)
+                Unique Attacker/s  - 10 (5 choose 2); seeds / runs - 2; JSON files generated - 10*2 = 20; 
+                two agents became attacker, 10 such combinations in one run, 2 runs, 10 json files created in each 
+
+experiment 3    1 Attacker (strong model - huihui_ai/qwen3-abliterated:32b) + 4 victim (weak model - llama3.1:8b)
+                Unique Attacker/s  - 5; seeds / runs - 1; JSON files generated - 5*1 = 5; 
+                each agent become strong attacker in one run, 1 runs, 5 json files created in each run
+

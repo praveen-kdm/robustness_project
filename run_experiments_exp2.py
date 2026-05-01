@@ -28,7 +28,7 @@ async def main():
     args = args.parse_args()
 
     project_root = Path(__file__).parent.resolve()
-    target_actions = pd.read_csv("datasets/BAD-ACTS_exp1.csv")
+    target_actions = pd.read_csv("datasets/BAD-ACTS.csv")
     target_actions = target_actions[target_actions["Environment"] == args.environment]
 
     all_agent_names = [f"agent_{i}" for i in range(5)]

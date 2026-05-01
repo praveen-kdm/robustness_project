@@ -40,7 +40,7 @@ if __name__=="__main__":
 
     # Load dataset of target actions
     # target_actions = pd.read_csv("datasets/BAD-ACTS.csv")
-    target_actions = pd.read_csv("datasets/BAD-ACTS_exp1.csv")
+    target_actions = pd.read_csv("datasets/BAD-ACTS.csv")
 
     if any(m in args.model_client.lower() for m in ["llama", "qwen"]):
         # 2. Manually define the capabilities to bypass the ValueError
