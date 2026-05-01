@@ -2,7 +2,7 @@
 #result_aggregation.sh
 
 # 1. Get the folder path passed as an argument (e.g., results/llama3.1)
-TARGET_FOLDER=$1
+# TARGET_FOLDER=$1
 
 TARGET_FOLDER=$1
 DATASET_NAME=$2 # Add this: e.g., "BAD-ACTS.csv" or "copy_BAD-ACTS.csv"
