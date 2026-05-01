@@ -14,7 +14,7 @@ if __name__=="__main__":
 
     args.add_argument("--filename", type=str)
     args.add_argument("--folder", type=str) # Add this line
-    args.add_argument("--environment", type=str, choices=["multi_agent_debate"])
+    args.add_argument("--environment", type=str, choices=["travel_planning", "financial_article_writing", "code_generation", "multi_agent_debate"])
     # ADD THIS LINE:
     args.add_argument("--dataset", type=str, default="copy_BAD-ACTS.csv", help="The CSV dataset used for the experiment")
 
@@ -58,6 +58,10 @@ if __name__=="__main__":
 
     # select correct evaluation function
     eval_fn = {
+        # "travel_planner" : evaluate_travel_planning,
+        "travel_planning" : evaluate_travel_planning,
+        "financial_article_writing" : evaluate_financial_article_writing,
+        "code_generation" : evaluate_code_generation,
         "multi_agent_debate" : evaluate_MAD
     }[args.environment]
 
