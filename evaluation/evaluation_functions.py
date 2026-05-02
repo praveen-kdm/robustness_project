@@ -37,7 +37,9 @@ def evaluate_MAD(datapoint):
         try:
             final_vote = mode(votes)
 
-            print(f"final_vote of all agents with majority: {final_vote}\n")    # pr
+            print(f"final_vote of all agents with majority: {final_vote}")    # pr
+            print(f'datapoint["keywords"] = {datapoint["keywords"]}') # pr
+            print(f"sucess/failure for this datapoint: {final_vote == datapoint['keywords'].strip()}") # pr
 
             return final_vote == datapoint["keywords"].strip()
         except Exception:

@@ -61,7 +61,8 @@ fi
 #=======================================================================
 echo "Starting Asymmetric Strength Experiment (32B vs 8B)..."
 
-bash scripts/run_MAD_experiments_exp3.sh
+# bash scripts/run_MAD_experiments_exp3.sh
+bash scripts/run_MAD_dry_run_exp3.sh
 
 EXIT_CODE=$?
 

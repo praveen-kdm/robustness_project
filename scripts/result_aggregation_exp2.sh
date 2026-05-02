@@ -17,7 +17,7 @@ SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 PROJECT_ROOT="$(dirname "$SCRIPT_DIR")"
 
 # 3. Define the path to the evaluation script and the target directory
-EVAL_SCRIPT="$PROJECT_ROOT/evaluation/evaluate_result.py"
+EVAL_SCRIPT="$PROJECT_ROOT/evaluation/evaluate_result_exp2.py"
 FULL_TARGET_DIR="$PROJECT_ROOT/$TARGET_FOLDER"
 
 # Extract "llama3.1" from "results/llama3.1"

@@ -16,7 +16,7 @@ if __name__=="__main__":
     args.add_argument("--folder", type=str) # Add this line
     args.add_argument("--environment", type=str, choices=["multi_agent_debate"])
     # ADD THIS LINE:
-    args.add_argument("--dataset", type=str, default="copy_BAD-ACTS.csv", help="The CSV dataset used for the experiment")
+    args.add_argument("--dataset", type=str, default="BAD-ACTS.csv", help="The CSV dataset used for the experiment")
 
     args = args.parse_args()
 
@@ -28,7 +28,8 @@ if __name__=="__main__":
     dataset_dir = project_root / "datasets"
 
     results_json_dir = project_root / "results" / args.folder
-    results_csv_dir = project_root / "results" / args.folder
+    results_csv_dir = results_json_dir / "csv_files"
+    results_csv_dir.mkdir(parents=True, exist_ok=True)
 
     json_file = Path(args.filename)
     csv_file = json_file.with_suffix('.csv')
