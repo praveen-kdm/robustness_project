@@ -13,6 +13,11 @@
 # Switch to the directory where you submitted the job
 cd $PBS_O_WORKDIR
 
+# Clear the specific log file for this experiment at the start of the run
+truncate -s 0 job_logs/exp2.out
+truncate -s 0 job_logs/exp2.err
+
+
 echo "================================================="
 echo "Experiment 2 started on: $(date)"
 echo "Job running on node: $(hostname)"
