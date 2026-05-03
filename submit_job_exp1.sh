@@ -59,7 +59,7 @@ OLLAMA_PID=$!
 
 # Give the server time to load the GPU drivers and wake up
 echo "Waiting for Ollama to initialize..."
-sleep 15
+sleep 30
 
 # Verify connection before starting Python
 if ! curl -s http://localhost:$MY_OLLAMA_PORT/api/tags > /dev/null; then

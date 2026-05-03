@@ -101,11 +101,6 @@ if __name__=="__main__":
         }
         results.append(curr_res)
 
-        # # --- DRY RUN PROTECTION ---
-        # if "DRY_RUN" in args.id:
-        #     print("Dry run detected: Stopping after first row.")
-        #     break
-
     strong_model_clean = args.strong_model.split("/")[-1].replace(":", "_")
     weak_model_clean = args.weak_model.replace(":", "_")
     

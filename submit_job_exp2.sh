@@ -49,7 +49,7 @@ echo "Starting Ollama Server for Exp2..."
 OLLAMA_PID=$!
 
 echo "Waiting for Ollama to initialize..."
-sleep 15
+sleep 30
 
 if ! curl -s http://localhost:$MY_OLLAMA_PORT/api/tags > /dev/null; then
     echo "CRITICAL ERROR: Ollama failed to start on port $MY_OLLAMA_PORT"

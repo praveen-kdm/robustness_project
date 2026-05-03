@@ -47,7 +47,7 @@ echo "Starting Ollama Server..."
 OLLAMA_PID=$!
 
 echo "Waiting for Ollama to initialize..."
-sleep 20 # Increased slightly for the 32B model to warm up drivers
+sleep 45 # Increased slightly for the 32B model to warm up drivers
 
 # Verify connection
 if ! curl -s http://localhost:$MY_OLLAMA_PORT/api/tags > /dev/null; then

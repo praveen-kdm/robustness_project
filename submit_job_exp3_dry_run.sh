@@ -47,7 +47,7 @@ echo "Starting Ollama Server..."
 OLLAMA_PID=$!
 
 echo "Waiting for Ollama to initialize..."
-sleep 20 # Increased slightly for the 32B model to warm up drivers
+sleep 45 # Increased slightly for the 32B model to warm up drivers
 
 # Verify connection
 if ! curl -s http://localhost:$MY_OLLAMA_PORT/api/tags > /dev/null; then
@@ -59,7 +59,11 @@ fi
 #=======================================================================
 # Experiment Execution
 #=======================================================================
-echo "Starting Asymmetric Strength Experiment (32B vs 8B)..."
+echo "Starting Asymmetric Strength Experiment (qwen3-32B-Abliterated vs llama3.1_8B)..."
+echo "Starting MAD Experiment Suite..."
+# --- TIMER START ---
+START_TIME=$(date +%s)
+echo "Starting Execution at: $(date)"
 
 # bash scripts/run_MAD_experiments_exp3.sh
 bash scripts/run_MAD_dry_run_exp3.sh
