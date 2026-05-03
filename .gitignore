@@ -8,6 +8,9 @@ outputs/
 logs/
 runs/
 
+#backups
+0_backup
+
 # model weights
 *.pt
 *.pth
